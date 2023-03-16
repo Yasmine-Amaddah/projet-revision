@@ -4,11 +4,10 @@ session_start();
 class User
 {
     public $login;
-    private $password;
+    public $password;
     public $email;
     public $firstname;
     public $lastname;
-    public $bdd;
 
     function getLogin()
     {
@@ -67,22 +66,21 @@ class User
         $this->password = $password;
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-        $this->bdd = new PDO("mysql:host=localhost;dbname=revisions", 'root', '');
     }
 
-    function register()
+    function register($bdd)
     {
         if ($this->verifierSiVide()) {
-            if ($this->loginUnique()) {
-                $request = $this->bdd->prepare('INSERT INTO `utilisateurs`(`login`, `password`, `email`, `first name`, `last name`) VALUES (?,?,?,?,?)');
+            if ($this->loginUnique($bdd)) {
+                $request = $bdd->prepare('INSERT INTO `utilisateurs`(`login`, `password`, `email`, `first name`, `last name`) VALUES (?,?,?,?,?)');
                 $request->execute([$this->login, $this->password, $this->email, $this->firstname, $this->lastname]);
             }
         }
     }
 
-    function loginUnique()
+    function loginUnique($bdd)
     {
-        $request = $this->bdd->prepare('SELECT login FROM utilisateurs WHERE login = ?');
+        $request = $bdd->prepare('SELECT login FROM utilisateurs WHERE login = ?');
         $request->execute([$_POST['login']]);
         if ($request->rowCount() < 1) {
             return true;
@@ -101,12 +99,12 @@ class User
         }
     }
 
-    function connect($login, $password)
+    function connect($bdd)
     {
-        $request = $this->bdd->prepare('SELECT * FROM utilisateurs WHERE login = ? AND password = ?');
-        $request->execute([$login, $password]);
+        $request = $bdd->prepare('SELECT * FROM utilisateurs WHERE login = ? AND password = ?');
+        $request->execute([$this->login, $this->password]);
         $result = $request->fetch();
-        $_SESSION["user"] = $result;
+        $_SESSION["user"] = $this;
     }
 
     function disconnect()
@@ -117,18 +115,26 @@ class User
 
     function isConnected()
     {
-        if (isset($_SESSION["user"]["login"])) {
+        if (isset($_SESSION["user"]->login)) {
             echo "Connected";
         } else {
             echo "Not connected";
         }
     }
 
-    function update($login, $password, $email, $firstname, $lastname)
+    function update($bdd)
     {
-        $request = $this->bdd->prepare("UPDATE `utilisateurs` SET `login`= ?,`password`= ?,`email`= ?,`first name`= ?,`last name`= ? WHERE id = ?");
-        $request->execute([$login, $password, $email, $firstname, $lastname, $_SESSION['user']['id']]);
+        $request = $bdd->prepare("UPDATE `utilisateurs` SET `login`= ?,`password`= ?,`email`= ?,`first name`= ?,`last name`= ? WHERE id = ?");
+        $request->execute([$this->login, $this->password, $this->email, $this->firstname, $this->lastname, $this->get_id($bdd)]);
+        
     }
+    function get_id($bdd){
+        $request = $bdd->prepare('SELECT `id` FROM utilisateurs WHERE login = ? ');
+        $request->execute([$this->login]);
+        $result = $request->fetch(); 
+        return $result['id'];
+    }
+
 }
 
 //$user = new User('toto','toto', 'toto@gmail.com', 'toto', 'toto');
@@ -138,3 +144,5 @@ class User
 //$user->isConnected();
 //$user->update('teste','teste', 'teste@gmail.com', 'teste', 'teste');
 //var_dump($user);
+//$bdd = new PDO("mysql:host=localhost;dbname=revisions", 'root', '');
+//$user->get_id($bdd);

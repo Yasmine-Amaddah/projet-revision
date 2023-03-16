@@ -10,18 +10,19 @@
 </head>
 
 <body>
-<?php include("header.php"); ?>
+<?php include("header.php"); ?> 
 
     <h1>Connexion</h1>
 
     <?php
     require('user.php');
+    require('config.php');
 
-    function submit()
+    function submit($bdd)
     {
         if (isset($_POST["submit"])) {
                 $user = new User($_POST['login'], $_POST['password'], '', '', '');
-                $user->connect($_POST['login'],$_POST['password']);
+                $user->connect($bdd);
                 $user->isConnected();
         }
     }
@@ -39,7 +40,7 @@
     </form>
 
     <?php
-    submit()
+    submit($bdd)
     ?>
 
 </body>

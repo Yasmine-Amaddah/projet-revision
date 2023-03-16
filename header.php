@@ -23,7 +23,7 @@
                             <li><a href="articles.php">Voir tout les articles</a></li>
                         </ul>
                     </li>
-
+                    <li><a href="memory/memory.php">Memory</a></li>
                 </ul>
             </nav>
         </div>

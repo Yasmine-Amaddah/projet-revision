@@ -16,13 +16,14 @@
 
     <?php
     require('user.php');
+    require('config.php');
 
-    function submit()
+    function submit($bdd)
     {
         if (isset($_POST["submit"])) {
-            if (isCompatible()) {
+            if (isCompatible($bdd)) {
                 $user = new User($_POST['login'], $_POST['password'], $_POST['email'], $_POST['firstname'], $_POST['lastname']);
-                $user->register();
+                $user->register($bdd);
                 }
                 else {
                     echo "Ce login existe deja, utilisez un autre login !";
@@ -67,7 +68,7 @@
     </form>
 
     <?php
-    submit();
+    submit($bdd);
     ?>
 
 </body>

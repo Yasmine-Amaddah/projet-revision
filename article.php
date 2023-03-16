@@ -51,7 +51,7 @@
         if (isset($_POST["submit"])) {
             //inserer l'article dans la table article
             $request2 = $bdd->prepare('INSERT INTO `articles`(`article`, `id_utilisateur`) VALUES (?,?)');
-            $request2->execute([$_POST['article'],$_SESSION['user']['id']]);
+            $request2->execute([$_POST['article'],$_SESSION['user']->get_id($bdd)]);
 
             $request1 = $bdd->prepare('SELECT * FROM `articles`');
             $request1->execute();
@@ -60,7 +60,7 @@
 
             $req = $bdd->prepare("SELECT * FROM articles INNER JOIN utilisateurs ON articles.id_utilisateur = utilisateurs.id WHERE articles.id_utilisateur = utilisateurs.id");
             $req->execute();
-            $result = $req->fetchAll(PDO::FETCH_ASSOC);
+            $result = $req->fetchAll(PDO::FETCH_ASSOC); 
 
             if (isset($_POST["categorie"])){
                 for ($i=0; $i < count($_POST["categorie"]); $i++){
