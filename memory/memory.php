@@ -2,8 +2,6 @@
 include("../header.php");
 require('card.php');
 
-var_dump($_SESSION['discover']);
-
 function CreateCarte($nb)
 {
     for ($i = 0; $i < ($nb * 2); $i += 2) {
@@ -15,56 +13,63 @@ function CreateCarte($nb)
     return $card;
 }
 
-function melangerCarte($nb)
+function melangerCarte($nb,$card)
 {
     if (empty($_SESSION['ordre'])) {
         $_SESSION['ordre'] = [];
         for ($i = 0; $i < ($nb * 2); $i++) {
-            array_push($_SESSION['ordre'], $i);
+            array_push($_SESSION['ordre'], $card[$i]);
         }
         shuffle($_SESSION['ordre']);
     }
     return $_SESSION['ordre'];
 }
 
-function clickedCarte($card, $i)
+function clickedCarte($i)
 {
     if (isset($_GET['id'])) {
-        if ($_GET['id'] == $card[$i]->id_card) {
-            $card[$i]->state = true;
+        if ($_GET['id'] == $i->get_id_card()) {
+            return true;
         }
     }
 }
 
-function retournerCarteTrue($card, $i)
+function retournerCarteTrue($i)
 {
     if ($_SESSION['trueCartes'] != null) {
-        if (comparerCarte($card, $i)) {
+        if (comparerCarte($i)) {
             $_SESSION['carte'][0]->set_state(true);
             $_SESSION['carte'][1]->set_state(true);
-            array_push($_SESSION['trueCartes'],$_SESSION['carte']);
-            var_dump("ok");
-        } 
-    }
-    else {
+            array_push($_SESSION['trueCartes'], $_SESSION['carte']);
+            header("Location:memory.php");
+        }
+    } else {
         $_SESSION['trueCartes'] = [];
     }
 }
 
-function comparerCarte($card, $i)
-{
-
+function comparerCarte($i)
+{ //var_dump($_SESSION['carte']);
     if (isset($_SESSION['carte'])) {
         if (count($_SESSION['carte']) < 2) {
-            if ($card[$i]->state == true) {
-                array_push($_SESSION['carte'], $card[$i]);
-                var_dump($_SESSION['carte']);
+            if (clickedCarte($i)) {
+                $i->set_state(true);
+                array_push($_SESSION['carte'], $i);
             }
         } else {
             if ($_SESSION['carte'][0]->img_face_up == $_SESSION['carte'][1]->img_face_up) {
+                if (isset($_SESSION['trueCartes'])) {
+                    $_SESSION['carte'][0]->set_state(true);
+                    $_SESSION['carte'][1]->set_state(true);
+                } else {
+                    $_SESSION['trueCartes'] = [];
+                }
+                array_push($_SESSION['trueCartes'], $_SESSION['carte']);
                 $_SESSION['carte'] = [];
-                return true;
+                //return true;
             } else {
+                $_SESSION['carte'][0]->set_state(false);
+                $_SESSION['carte'][1]->set_state(false);
                 $_SESSION['carte'] = [];
                 return false;
             }
@@ -84,32 +89,31 @@ function resetGame()
     }
 }
 
-
 function AfficherCarte($nb)
 {
-    $card = CreateCarte($nb);
-    $tab = melangerCarte($nb);
-    foreach ($tab as $i) {
-        //for ($i = 0; $i < count($a); $i++) {
-        clickedCarte($card, $i);
-        comparerCarte($card, $i);
-        //retournerCarteTrue($card, $i);
-        if ($card[$i]->state == false) { ?>
-            <form method="GET">
-                <button type="submit" value="<?= $i ?>" name="id">
-                    <img src=<?php echo $card[$i]->get_img_face_down(); ?>>
+?>
+    <form method="GET">
+        <?php
+        $card = CreateCarte($nb);
+        $tab = melangerCarte($nb,$card); // $tab = $_SESSION['ordre']
+        foreach ($tab as $i) {
+            comparerCarte($i);
+            if ($i->get_state() == false) { ?>
+                <button type="submit" value="<?= $i->get_id_card() ?>" name="id">
+                    <img src=<?php echo $i->get_img_face_down(); ?>>
                 </button>
-            </form>
-        <?php } else {
+            <?php } else {
+            ?>
+                <button type="submit" value="<?= $i->get_id_card() ?>" name="id">
+                    <img src=<?php echo $i->get_img_face_up(); ?>>
+                </button>
+        <?php }
+            
+        }
         ?>
-            <form method="GET">
-                <button type="submit" value="<?= $i ?>" name="id">
-                    <img src=<?php echo $card[$i]->get_img_face_up(); ?>>
-                </button>
-            </form>
+    </form>
 <?php }
-    }
-}
+
 resetGame();
 ?>
 <!DOCTYPE html>
