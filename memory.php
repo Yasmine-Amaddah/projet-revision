@@ -76,7 +76,7 @@ function finPartie()
     if (isset($_SESSION['trueCartes'])) {
         if (count($_SESSION['trueCartes']) == (count($_SESSION['ordre']) / 2)) {
             $_SESSION['score'] = (count($_SESSION['trueCartes']) * 3) - $_SESSION['nbCoups'];
-            $_SESSION['msgFin'] = "PARTIE TERMINEE, VOTRE SCORE EST : " . $_SESSION['score'];
+            $_SESSION['msgFin'] = "PARTIE TERMINÉE, VOTRE SCORE EST : " . $_SESSION['score'];
         }
     }
 }
@@ -137,8 +137,8 @@ resetGame();
 <body class="body-memory">
     <div class="difficulte">
         <form method="post">
-            <label>Veuillez choisir le niveau de difficulté : </label>
-            <select name="diff" id="diff">
+            <label class="paraf">Veuillez choisir le niveau de difficulté : </label>
+            <select class="box" name="diff" id="diff">
                 <option value="3">6 Cartes</option>
                 <option value="6">12 Cartes</option>
                 <option value="11">22 Cartes</option>

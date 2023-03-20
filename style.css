@@ -5,73 +5,14 @@
   box-sizing: border-box;
 }
 
-nav {
-  text-align: center;
-  margin-bottom: 5%;
-}
-
-nav a {
-  color: #ffffff;
-  text-decoration: none;
-}
-
-/* code menu */
-
-.menu {
-  margin-top: 0;
-  display: inline-block;
-  color: #ffffff;
-}
-
-.menu>li {
-  float: left;
-  color: #ffffff;
-  width: 140px;
-  height: 40px;
-  line-height: 40px;
-  background: rgba(1, 4, 26, 0.7);
-  cursor: pointer;
-  font-size: 17px;
-}
-
-.sub-menu {
-  transform: scale(0);
-  transform-origin: top center;
-  transition: all 300ms ease-in-out;
-  color: #ffffff;
-}
-
-.sub-menu li {
-  font-size: 14px;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 8px 0;
-  color: white;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.489);
-  transform: scale(0);
-  transform-origin: top center;
-  transition: all 300ms ease-in-out;
-}
-
-.sub-menu li:last-child {
-  border-bottom: 0;
-}
-
-.sub-menu li:hover {
-  background: rgb(0, 0, 0);
-}
-
-.menu>li:hover .sub-menu li {
-  transform: scale(1);
-}
-
-.menu>li:hover .sub-menu {
-  transform: scale(1);
-}
-
-/* fin code menu */
-
 .difficulte {
   margin-bottom: 3%;
+}
+
+.paraf {
+  font-size: 150%;
+  color: rgb(0, 0, 0);
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.557);
 }
 
 .reinitialiser {
@@ -91,10 +32,12 @@ nav a {
 }
 
 .msgFin {
+  font-size: 200%;
   margin-top: 3%;
   text-align: center;
   color: rgb(222, 6, 6);
   font-weight: bolder;
+  text-shadow: 0 0 3px #ffcbcb, 0 0 5px #ffffff;
 }
 
 .button {
@@ -106,6 +49,28 @@ nav a {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+}
+
+input {
+  background-color: #d55ff9;
+  border: none;
+  color: white;
+  padding: 5px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.box {
+  width: 120px;
+  height: 25px;
+  border: 1px solid #999;
+  
+  color: #bb10ca;
+  background-color: #eee;
+  border-radius: 5px;
+  box-shadow: 4px 4px #ccc;
 }
 
 .body-memory {
