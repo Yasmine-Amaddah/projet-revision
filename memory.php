@@ -1,19 +1,23 @@
 <?php
-include("../header.php");
+include("header.php");
 require('card.php');
+
+$_SESSION['msgFin'] = '';
 
 function CreateCarte($nb)
 {
-    for ($i = 0; $i < ($nb * 2); $i += 2) {
-        $carteUp = 'image/' . $i . '.jpg';
-        $carteDown = 'image/back.jpg';
-        $card[$i] = new Card($i, $carteDown, $carteUp, false);
-        $card[$i + 1] = new Card($i + 1, $carteDown, $carteUp, false);
+    if ($nb != null) {
+        for ($i = 0; $i < ($nb * 2); $i += 2) {
+            $carteUp = 'image/' . $i . '.jpg';
+            $carteDown = 'image/back.jpg';
+            $card[$i] = new Card($i, $carteDown, $carteUp, false);
+            $card[$i + 1] = new Card($i + 1, $carteDown, $carteUp, false);
+        }
+        return $card;
     }
-    return $card;
 }
 
-function melangerCarte($nb,$card)
+function melangerCarte($nb, $card)
 {
     if (empty($_SESSION['ordre'])) {
         $_SESSION['ordre'] = [];
@@ -34,22 +38,8 @@ function clickedCarte($i)
     }
 }
 
-function retournerCarteTrue($i)
-{
-    if ($_SESSION['trueCartes'] != null) {
-        if (comparerCarte($i)) {
-            $_SESSION['carte'][0]->set_state(true);
-            $_SESSION['carte'][1]->set_state(true);
-            array_push($_SESSION['trueCartes'], $_SESSION['carte']);
-            header("Location:memory.php");
-        }
-    } else {
-        $_SESSION['trueCartes'] = [];
-    }
-}
-
 function comparerCarte($i)
-{ //var_dump($_SESSION['carte']);
+{
     if (isset($_SESSION['carte'])) {
         if (count($_SESSION['carte']) < 2) {
             if (clickedCarte($i)) {
@@ -66,25 +56,37 @@ function comparerCarte($i)
                 }
                 array_push($_SESSION['trueCartes'], $_SESSION['carte']);
                 $_SESSION['carte'] = [];
-                //return true;
             } else {
                 $_SESSION['carte'][0]->set_state(false);
                 $_SESSION['carte'][1]->set_state(false);
                 $_SESSION['carte'] = [];
-                return false;
+            }
+            if (isset($_SESSION['nbCoups'])) { // s'il existe ET qu'il est null 
+                $_SESSION['nbCoups']++;
+            } else {
+                $_SESSION['nbCoups'] = 1;
             }
         }
     } else {
         $_SESSION['carte'] = [];
     }
 }
-
+function finPartie()
+{ // quand toutes les cartes sont true
+    if (isset($_SESSION['trueCartes'])) {
+        if (count($_SESSION['trueCartes']) == (count($_SESSION['ordre']) / 2)) {
+            $_SESSION['score'] = (count($_SESSION['trueCartes']) * 3) - $_SESSION['nbCoups'];
+            $_SESSION['msgFin'] = "PARTIE TERMINEE, VOTRE SCORE EST : " . $_SESSION['score'];
+        }
+    }
+}
 
 function resetGame()
 {
     if (isset($_GET['reset'])) {
         session_destroy();
         unset($_GET);
+        unset($_POST);
         header('location:memory.php');
     }
 }
@@ -95,7 +97,7 @@ function AfficherCarte($nb)
     <form method="GET">
         <?php
         $card = CreateCarte($nb);
-        $tab = melangerCarte($nb,$card); // $tab = $_SESSION['ordre']
+        $tab = melangerCarte($nb, $card); // $tab = $_SESSION['ordre']
         foreach ($tab as $i) {
             comparerCarte($i);
             if ($i->get_state() == false) { ?>
@@ -104,15 +106,21 @@ function AfficherCarte($nb)
                 </button>
             <?php } else {
             ?>
-                <button type="submit" value="<?= $i->get_id_card() ?>" name="id">
-                    <img src=<?php echo $i->get_img_face_up(); ?>>
-                </button>
+                <!-- <button type="submit" value="<?= $i->get_id_card() ?>" name="id"> -->
+                <img src=<?php echo $i->get_img_face_up(); ?>>
+                <!-- </button> -->
         <?php }
-            
         }
         ?>
     </form>
 <?php }
+
+function nombreCartes()
+{
+    if (isset($_POST['diff'])) {
+        return $_POST['diff'];
+    }
+}
 
 resetGame();
 ?>
@@ -126,14 +134,27 @@ resetGame();
     <link rel="stylesheet" href="style.css" />
     <title>memory</title>
 </head>
-
-<body>
-    <div style="display: flex; flex-wrap: wrap">
+<body class="body-memory">
+    <div class="difficulte">
+        <form method="post">
+            <label>Veuillez choisir le niveau de difficulté : </label>
+            <select name="diff" id="diff">
+                <option value="3">6 Cartes</option>
+                <option value="6">12 Cartes</option>
+                <option value="11">22 Cartes</option>
+            </select>
+            <input type="submit" name="Envoyer">
+        </form>
+    </div>
+    <div class="jeu">
         <?php
-        AfficherCarte(6);
+        $_SESSION['nb'] = intval(nombreCartes());
+        AfficherCarte($_SESSION['nb']);
+        finPartie();
         ?>
     </div>
-    <div style="margin: 5%;">
+    <div class="msgFin"><?= $_SESSION['msgFin']; ?></div>
+    <div class="reinitialiser">
         <form method="get">
             <button class="button" type="submit" name="reset">Reinitialiser la partie</button>
         </form>

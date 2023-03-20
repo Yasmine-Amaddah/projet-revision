@@ -55,7 +55,7 @@ class Card
         $this->img_face_up = $img_face_up;
         $this->state = $state;
     }
-
+ 
 }
 
 //$user = new Card();
