@@ -73,6 +73,19 @@ input {
   box-shadow: 4px 4px #ccc;
 }
 
+.coup {
+  background-color: rgba(0, 0, 0, 0.482);
+  padding: 50px 25px;
+  width: 15%;
+  margin: 10px;
+  text-align: center;
+  position: absolute;
+}
+
+.pourflex {
+  display: flex;
+}
+
 .body-memory {
   background-image: url("https://marketplace.canva.com/EAFHm4JWsu8/1/0/1600w/canva-pink-landscape-desktop-wallpaper-HGxdJA_xIx0.jpg");
   background-repeat: no-repeat;

@@ -61,7 +61,7 @@ function comparerCarte($i)
                 $_SESSION['carte'][1]->set_state(false);
                 $_SESSION['carte'] = [];
             }
-            if (isset($_SESSION['nbCoups'])) { // s'il existe ET qu'il est null 
+            if (isset($_SESSION['nbCoups'])) { 
                 $_SESSION['nbCoups']++;
             } else {
                 $_SESSION['nbCoups'] = 1;
@@ -146,6 +146,11 @@ resetGame();
             <input type="submit" name="Envoyer">
         </form>
     </div>
+<div class="pourflex">
+    <?php if (isset($_SESSION['nbCoups'])) { ?>
+    <div class="coup">Compteur de coup : </br><?= $_SESSION['nbCoups']; ?></div>
+    <?php } ?>
+
     <div class="jeu">
         <?php
         $_SESSION['nb'] = intval(nombreCartes());
@@ -153,6 +158,7 @@ resetGame();
         finPartie();
         ?>
     </div>
+</div>
     <div class="msgFin"><?= $_SESSION['msgFin']; ?></div>
     <div class="reinitialiser">
         <form method="get">
